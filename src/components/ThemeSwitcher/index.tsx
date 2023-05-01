@@ -1,6 +1,5 @@
-'use client';
-
 import { FC, useContext, useState } from 'react';
+import isNil from 'lodash/isNil';
 
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
@@ -8,14 +7,17 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 
 import Tooltip from '@mui/material/Tooltip';
 
-import { ThemeMode, ChangeThemeContext } from '@/theme';
-import { getLocalStorageItem } from '@/helpers/getLocalStorageItem';
+import { ThemeMode, CustomThemeContext } from '@/theme';
 
 import * as S from './styles';
 
 export const ThemeSwitcher: FC = () => {
-  const [themeMode, setThemeMode] = useState(getLocalStorageItem('themeMode'));
-  const changeTheme = useContext(ChangeThemeContext);
+  const { changeTheme, themeMode: initialThemeMode } = useContext(CustomThemeContext);
+  const [themeMode, setThemeMode] = useState(initialThemeMode);
+
+  if (isNil(changeTheme) || isNil(themeMode)) {
+    return null;
+  }
 
   return (
     <S.ToggleButtonGroup

@@ -8,12 +8,15 @@ import NextDocument, {
 } from 'next/document';
 import { AppType } from 'next/app';
 
+import { ServerStyleSheet } from 'styled-components';
+
 import createEmotionServer from '@emotion/server/create-instance';
 
 import { createEmotionCache } from '@/helpers/createEmotionCache';
 
 import { openSans } from '@/theme/fonts';
 import { Theme } from '@/theme';
+
 
 import { AppProps } from './_app';
 
@@ -69,29 +72,36 @@ Document.getInitialProps = async (ctx: DocumentContext) => {
   const cache = createEmotionCache();
   const { extractCriticalToChunks } = createEmotionServer(cache);
 
-  ctx.renderPage = () =>
-    originalRenderPage({
-      enhanceApp: (App: React.ComponentType<React.ComponentProps<AppType> & AppProps>) =>
-        function EnhanceApp(props) {
-          return <App emotionCache={cache} {...props} />;
-        },
-    });
+  const sheet = new ServerStyleSheet();
 
-  const initialProps = await NextDocument.getInitialProps(ctx);
-  // This is important. It prevents Emotion to render invalid HTML.
-  // See https://github.com/mui/material-ui/issues/26561#issuecomment-855286153
-  const emotionStyles = extractCriticalToChunks(initialProps.html);
-  const emotionStyleTags = emotionStyles.styles.map((style) => (
-    <style
-      data-emotion={`${style.key} ${style.ids.join(' ')}`}
-      key={style.key}
-      // eslint-disable-next-line react/no-danger
-      dangerouslySetInnerHTML={{ __html: style.css }}
-    />
-  ));
+  try {
+    ctx.renderPage = () =>
+      originalRenderPage({
+        enhanceApp: (App: React.ComponentType<React.ComponentProps<AppType> & AppProps>) =>
+          function EnhanceApp(props) {
+            return sheet.collectStyles(<App emotionCache={cache} {...props} />);
+          },
+      });
 
-  return {
-    ...initialProps,
-    emotionStyleTags,
-  };
+    const initialProps = await NextDocument.getInitialProps(ctx);
+    // This is important. It prevents Emotion to render invalid HTML.
+    // See https://github.com/mui/material-ui/issues/26561#issuecomment-855286153
+    const emotionStyles = extractCriticalToChunks(initialProps.html);
+    const emotionStyleTags = emotionStyles.styles.map((style) => (
+      <style
+        data-emotion={`${style.key} ${style.ids.join(' ')}`}
+        key={style.key}
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: style.css }}
+      />
+    ));
+
+    return {
+      ...initialProps,
+      emotionStyleTags,
+      styles: [initialProps.styles, sheet.getStyleElement()],
+    };
+  } finally {
+    sheet.seal();
+  }
 };

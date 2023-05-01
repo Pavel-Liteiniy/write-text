@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { createTheme } from '@mui/material/styles';
+import { Theme as ThemeMUI, createTheme } from '@mui/material/styles';
 
 import { openSans } from '@/theme/fonts';
 
@@ -19,6 +19,7 @@ const themeLight = createTheme({
   typography: { fontFamily: openSans.style.fontFamily },
 });
 
+export const DEFAULT_THEME_MODE = ThemeMode.LIGHT;
 export const DEFAULT_THEME = themeLight;
 
 export const Theme = {
@@ -26,4 +27,8 @@ export const Theme = {
   [ThemeMode.LIGHT]: themeLight,
 };
 
-export const ChangeThemeContext = createContext<(newThemeMode: ThemeMode) => void>(() => {});
+export const CustomThemeContext = createContext<{
+  themeMode?: ThemeMode,
+  theme?: ThemeMUI
+  changeTheme?: (newThemeMode: ThemeMode) => void
+}>({});

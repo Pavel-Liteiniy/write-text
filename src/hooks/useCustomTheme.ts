@@ -1,19 +1,19 @@
 import { useCallback, useEffect, useState } from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { getLocalStorageItem } from '@/helpers/getLocalStorageItem';
-import { setLocalStorageItem } from '@/helpers/setLocalStorageItem';
 import { selectTheme } from '@/helpers/selectTheme';
+import { setCookie } from '@/helpers/setCookie';
+import { getCookie } from '@/helpers/getCookie';
 
-import { ThemeMode } from '@/theme';
+import { DEFAULT_THEME_MODE, ThemeMode } from '@/theme';
 
-export const useCustomTheme = () => {
-  const themeMode = getLocalStorageItem('themeMode');
+export const useCustomTheme = (initialThemeMode?: ThemeMode) => {
+  const themeMode = getCookie('themeMode') ?? initialThemeMode ?? DEFAULT_THEME_MODE;
   const isSystemDarkThemeMode = useMediaQuery('(prefers-color-scheme: dark)');
   const [theme, setTheme] = useState(selectTheme(themeMode, isSystemDarkThemeMode));
 
   const changeTheme = useCallback((newThemeMode: ThemeMode) => {
-    setLocalStorageItem('themeMode', newThemeMode);
+    setCookie('themeMode', newThemeMode);
     setTheme(selectTheme(newThemeMode, isSystemDarkThemeMode));
   }, [isSystemDarkThemeMode]);
 
@@ -23,5 +23,9 @@ export const useCustomTheme = () => {
     }
   }, [themeMode, changeTheme]);
 
-  return [theme, changeTheme] as [typeof theme, typeof changeTheme];
+  return {
+    themeMode,
+    theme,
+    changeTheme,
+  };
 };

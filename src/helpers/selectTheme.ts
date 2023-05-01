@@ -3,7 +3,7 @@ import isNil from 'lodash/isNil';
 import { ThemeMode, Theme, DEFAULT_THEME } from '@/theme';
 
 export const selectTheme = (
-  mode?: ThemeMode | null,
+  mode?: ThemeMode,
   isSystemDarkTheme?: boolean | null,
 ) => {
   // If the user has selected a custom theme and the system theme is not set

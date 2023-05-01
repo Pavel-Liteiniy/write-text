@@ -1,5 +1,9 @@
-import { ThemeMode } from '@/theme';
-
 export type LocalStorageSchema = {
-  themeMode?: ThemeMode
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    avatar: string;
+    token: string;
+  };
 };
