@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import dayjs from 'dayjs';
 
-import Typography from '@mui/material/Typography';
+import { Typography } from '@/uikit/Typography';
 
 import * as S from './styles';
 
