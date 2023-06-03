@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import BoxMUI from '@mui/material/Box';
 
-import { TextArea as TextAreaComponent } from '@/components/TextArea';
+import { TextWithAI as TextWithAIComponent } from '@/components/TextWithAI';
 
 export const HeaderWrapper = styled(BoxMUI)`
   display: flex;
@@ -34,6 +34,6 @@ export const HomePage = styled(BoxMUI)`
   min-height: 100vh;
 `;
 
-export const TextArea = styled(TextAreaComponent)`
+export const TextWithAI = styled(TextWithAIComponent)`
   width: 80%;
 `;
