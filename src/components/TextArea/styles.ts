@@ -1,3 +1,5 @@
 import styled from 'styled-components';
 
-export const TextArea = styled.div``;
+import TextField from '@mui/material/TextField';
+
+export const TextArea = styled(TextField)``;
